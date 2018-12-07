@@ -89,7 +89,9 @@ static inline T FileReader_read(void *fs_ptr) {
     }
   
     // Increment the offset (the virtual data pointer)
-    fs->file_offset = (fs->file_offset + sizeof(T)) % fs->file_length; 
+    if (fs->file_length > 0) {
+        fs->file_offset = (fs->file_offset + sizeof(T)) % fs->file_length;
+    }
     // } RMR
 
     return res;
@@ -135,8 +137,10 @@ template<>
     ++(fs->buf_index);
   
     // Increment the offset (the virtual data pointer)
-    ++(fs->file_offset);
-    if (fs->file_offset >= fs->file_length) fs->file_offset %= fs->file_length; 
+    if (fs->file_length > 0) {
+        ++(fs->file_offset);
+        if (fs->file_offset >= fs->file_length) fs->file_offset %= fs->file_length;
+    }
     // } RMR
     
 
@@ -165,7 +169,9 @@ inline void FileReader_read(void *fs_ptr, void* dest, int len) {
     }
   
     // Increment the offset (the virtual data pointer)
-    fs->file_offset = (fs->file_offset + ret_val) % fs->file_length; 
+    if (fs->file_length > 0) {
+        fs->file_offset = (fs->file_offset + ret_val) % fs->file_length;
+    }
 
     //return ret_val;
 }
