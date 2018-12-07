@@ -57,15 +57,8 @@ dnl fi
 dnl
 dnl The following works to identify versions of Hotspot only:
 dnl If they hava a java compiler, we could do better
-if $JAVA -version 2>&1 | grep -q 1\\\.5 > /dev/null; then
 dnl OK: have sun java 1.5 -- sun java takes -version and outpts to stderr
 JAVA5=1
-else
-JAVA5=0
-AC_MSG_ERROR(
-[Your Java virtual machine seems not to accept Java version 1.5. \
-Make sure that "$JAVA -version" responds with a message including "1.5".])
-fi
 
 
 AC_CHECK_PROGS(JAVAC, [javac])
