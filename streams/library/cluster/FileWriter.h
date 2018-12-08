@@ -33,7 +33,6 @@ public:
   int file_offset, file_length;
   char file_buf[BUF_SIZE];
   int buf_index;
-  volatile int junk;
 };
 
 /* Routines that are independent of <T>, make them not be in class */
@@ -52,52 +51,35 @@ template<class T>
  inline void FileWriter_write(void *fs_ptr, T data) {
     FileWriter_state *fs = (FileWriter_state*)fs_ptr;
 
-    /*
-    assert((sizeof(T) % 4) == 0);
-
     // Flush if adding data to the buffer would overflow the buffer
     if (fs->buf_index + sizeof(T) > BUF_SIZE) FileWriter_flush(fs_ptr);
 
-    // RMR { note this code assume that the data is placed in 
-    // consecutive words; which is the case for the current
-    // defintion of the <complex> data type
-    for (int i = 0; i < sizeof(T); i += 4) {
-        *(int*)(fs->file_buf + fs->buf_index) = *((int*)((&data)+i));
-        fs->buf_index += 4;
+    char * cdata = (char*) &data;
+    for (int i = 0; i < sizeof(T); ++i)
+    {
+        fs->file_buf[fs->buf_index + i] = cdata[i];
     }
-    // } RMR
-    */
 
-    fs->junk = (int)data;
+    fs->buf_index += sizeof(T);
 }
 
 template<>
  inline void FileWriter_write(void *fs_ptr, unsigned char data) {
     FileWriter_state *fs = (FileWriter_state*)fs_ptr;
 
-    /*
     // Flush if adding data to the buffer would overflow the buffer
     if (fs->buf_index >= BUF_SIZE) FileWriter_flush(fs_ptr);
 
-    // RMR { note this code assume that the data is placed in 
-    // consecutive words; which is the case for the current
-    // defintion of the <complex> data type
-    *(unsigned char*)(fs->file_buf + fs->buf_index) = data;
+    fs->file_buf[fs->buf_index] = data;
     ++(fs->buf_index);
-    // } RMR
-    */
-
-    fs->junk = (int)data;
 }
 
 //template<>
 inline void FileWriter_write(void *fs_ptr, const void* data, int len) {
     FileWriter_state *fs = (FileWriter_state*)fs_ptr;
 
-    /*
     FileWriter_flush(fs_ptr);
     
     write(fs->file_handle, data, len);	
-    */
 }
 #endif
