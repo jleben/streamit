@@ -319,28 +319,20 @@ public class CoreCodeStore extends ComputeCodeStore<Core> {
     }
     
     public void generateNumbersCode() {
+        appendTxtToGlobal("#include <arrp_timer.h>\n");
         appendTxtToGlobal("uint64_t __last_cycle__ = 0;\n");
         appendTxtToGlobal("int __iteration__ = ITERATIONS;\n");
+        appendTxtToGlobal("static arrp_eval::Timer timer(2, 3, ITERATIONS * "
+            + ProcessFileWriter.getTotalOutputs() + ");\n");
         
-        appendTxtToGlobal("void __printSSCycleAvg() {\n");
-        appendTxtToGlobal("  uint64_t __cur_cycle__ = rdtsc();\n");
-        appendTxtToGlobal("  if(__last_cycle__ != 0) {\n");
-        if (ProcessFileWriter.getTotalOutputs() > 0) {
-            appendTxtToGlobal("    printf(\"Average cycles per SS for %d iterations: %llu, avg cycles per output: %llu\\n\", \n" +
-                              "      ITERATIONS, (__cur_cycle__ - __last_cycle__) / ITERATIONS, \n" +
-                              "      (((__cur_cycle__ - __last_cycle__) / ITERATIONS) / ((uint64_t)" + ProcessFileWriter.getTotalOutputs() + ")));\n");
-        }
-        else {
-            appendTxtToGlobal("    printf(\"Average cycles per SS for %d iterations: %llu \\n\", ITERATIONS, (__cur_cycle__ - __last_cycle__) / ITERATIONS);\n");
-        }
-        appendTxtToGlobal("    fflush(stdout);\n");
-        appendTxtToGlobal("  }\n");
-        appendTxtToGlobal("  __last_cycle__ = rdtsc();\n");
+        appendTxtToGlobal("void __time() {\n");
+        appendTxtToGlobal("    timer.stop();\n");
+        appendTxtToGlobal("    timer.start();\n");
         appendTxtToGlobal("  __iteration__ = 0;\n");
         appendTxtToGlobal("}\n");
 
         addSteadyLoopStatement(Util.toStmt("__iteration__++"));
-        addSteadyLoopStatement(Util.toStmt("if (__iteration__ >= ITERATIONS) __printSSCycleAvg()"));
+        addSteadyLoopStatement(Util.toStmt("if (__iteration__ >= ITERATIONS) __time()"));
     }
     
     public void addFunctionCallFirst(JMethodDeclaration func, JExpression[] args) {
