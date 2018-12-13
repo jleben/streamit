@@ -20,7 +20,7 @@ public class FileReaderRemoteReads extends FileReaderCode {
         generateStatements(SchedulingPhase.INIT);
         generateStatements(SchedulingPhase.STEADY);
 
-        buf.parent.getComputeCode().appendTxtToGlobal("int fileReadIndex__" + id + " = 0;\n");
+        buf.parent.getComputeCode().appendTxtToGlobal("static int fileReadIndex__" + id + " = 0;\n");
     }
 
     private void generateStatements(SchedulingPhase phase) {
