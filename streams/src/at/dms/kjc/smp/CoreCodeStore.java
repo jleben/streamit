@@ -322,7 +322,7 @@ public class CoreCodeStore extends ComputeCodeStore<Core> {
         appendTxtToGlobal("#include <arrp_timer.h>\n");
         appendTxtToGlobal("uint64_t __last_cycle__ = 0;\n");
         appendTxtToGlobal("int __iteration__ = ITERATIONS;\n");
-        appendTxtToGlobal("static arrp_eval::Timer timer(2, 3, ITERATIONS * "
+        appendTxtToGlobal("static arrp_eval::Timer timer(2, 3, ITERATIONS * (int64_t)"
             + ProcessFileWriter.getTotalOutputs() + ");\n");
         
         appendTxtToGlobal("void __time() {\n");
