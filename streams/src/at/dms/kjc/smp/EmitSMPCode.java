@@ -151,6 +151,12 @@ public class EmitSMPCode extends EmitCode {
 
         generateIncludes(p);
 
+        p.println("#include <arrp_streamit_utils.h>");
+        p.println();
+
+        p.println("arrp_eval::Test_Options options;");
+        p.println();
+
         if(KjcOptions.iterations != -1) {
             p.println("// Number of steady-state iterations");
             p.println("int maxSteadyIter = " + KjcOptions.iterations + ";");
@@ -176,6 +182,8 @@ public class EmitSMPCode extends EmitCode {
         p.println("// main() Function Here");
         p.println("int main(int argc, char** argv) {");
         p.indent();
+
+        p.println("options = arrp_eval::Test_Options::parse(argc, argv);");
 
         // figure out how many cores will participate in barrier
         int barrier_count = 0;

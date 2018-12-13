@@ -287,9 +287,14 @@ public class CoreCodeStore extends ComputeCodeStore<Core> {
 	    FileOutputContent fileOutput = (FileOutputContent)fileW.getFilter();
 
 	    codeStore.addPrintOutputCode(buf, firstInputFilter);
+	    codeStore.appendTxtToGlobal("#include <arrp_streamit_utils.h>\n");
 	    codeStore.appendTxtToGlobal("FILE *output;\n");
-	    codeStore.addStatementFirstToBufferInit(Util.toStmt("output = fopen(\"" + fileOutput.getFileName() + "\", \"w\")"));
-            
+	    codeStore.appendTxtToGlobal("extern arrp_eval::Test_Options options;\n");
+	    codeStore.addStatementFirstToBufferInit(Util.toStmt("output = fopen("
+            + "options.output.empty()"
+            + " ? \"" + fileOutput.getFileName() + "\""
+            + " : options.output.c_str()"
+            + ", \"w\")"));
         }
     }
     
@@ -309,13 +314,10 @@ public class CoreCodeStore extends ComputeCodeStore<Core> {
             assert SMPBackend.scheduler.getGraphSchedule().getPrimePumpMult(edge.getSrc().getParent()) == 1;
         }
         int outputs = fileW.getFilter().getSteadyMult();
-        String type = ((FileOutputContent)fileW.getFilter()).getType() == CStdType.Integer ? "%d" : "%f";
-        String cast = ((FileOutputContent)fileW.getFilter()).getType() == CStdType.Integer ? "(int)" : "(float)";
         String bufferName = buf.getAddressRotation(filter).currentWriteBufName;
-        //create the loop
+        String typeName = ((FileOutputContent)fileW.getFilter()).getType().toString();
         addSteadyLoopStatement(Util.toStmt(
-                "for (int _i_ = 0; _i_ < " + outputs + "; _i_++) fprintf(output, \"" + type + "\\n\", " + cast + 
-                bufferName +"[_i_])"));
+                "fwrite(" + bufferName + ", sizeof(" + typeName + "), " + outputs + ", output)"));
     }
     
     public void generateNumbersCode() {
