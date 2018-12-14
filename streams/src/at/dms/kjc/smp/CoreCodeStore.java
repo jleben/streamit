@@ -288,8 +288,10 @@ public class CoreCodeStore extends ComputeCodeStore<Core> {
 
 	    codeStore.addPrintOutputCode(buf, firstInputFilter);
 	    codeStore.appendTxtToGlobal("#include <arrp_streamit_utils.h>\n");
-	    codeStore.appendTxtToGlobal("FILE *output;\n");
 	    codeStore.appendTxtToGlobal("extern arrp_eval::Test_Options options;\n");
+	    codeStore.appendTxtToGlobal("FILE *output;\n");
+	    codeStore.appendTxtToGlobal("static int64_t output_count = 0;\n");
+
 	    codeStore.addStatementFirstToBufferInit(Util.toStmt("output = fopen("
             + "options.output.empty()"
             + " ? \"" + fileOutput.getFileName() + "\""
@@ -318,6 +320,8 @@ public class CoreCodeStore extends ComputeCodeStore<Core> {
         String typeName = ((FileOutputContent)fileW.getFilter()).getType().toString();
         addSteadyLoopStatement(Util.toStmt(
                 "fwrite(" + bufferName + ", sizeof(" + typeName + "), " + outputs + ", output)"));
+        addSteadyLoopStatement(Util.toStmt("output_count += " + outputs));
+        addSteadyLoopStatement(Util.toStmt("if (options.out_count > 0 && output_count >= options.out_count) exit(0)"));
     }
     
     public void generateNumbersCode() {
@@ -328,8 +332,10 @@ public class CoreCodeStore extends ComputeCodeStore<Core> {
             + ProcessFileWriter.getTotalOutputs() + ");\n");
         
         appendTxtToGlobal("void __time() {\n");
-        appendTxtToGlobal("    timer.stop();\n");
-        appendTxtToGlobal("    timer.start();\n");
+        appendTxtToGlobal("    if (options.time) {\n");
+        appendTxtToGlobal("        timer.stop();\n");
+        appendTxtToGlobal("        timer.start();\n");
+        appendTxtToGlobal("    }\n");
         appendTxtToGlobal("  __iteration__ = 0;\n");
         appendTxtToGlobal("}\n");
 
