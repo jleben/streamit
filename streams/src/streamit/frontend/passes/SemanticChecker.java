@@ -599,8 +599,10 @@ public class SemanticChecker
                                     // can concatenate strings and characters
                                     if (!ct.promotesTo(cplxtype) && 
                                         !ct.promotesTo(stringtype) &&
-                                        !ct.promotesTo(float2type) && 
-                                        !ct.promotesTo(float3type) && 
+                                        !ct.promotesTo(TypePrimitive.floattype) &&
+                                        !ct.promotesTo(TypePrimitive.doubletype) &&
+                                        !ct.promotesTo(float2type) &&
+                                        !ct.promotesTo(float3type) &&
                                         !ct.promotesTo(float4type)) 
                                         report(expr,
                                                "cannot perform + on " + ct);
@@ -611,7 +613,9 @@ public class SemanticChecker
                                 case ExprBinary.BINOP_MUL:
                                 case ExprBinary.BINOP_SUB:
                                     if (!ct.promotesTo(cplxtype) &&
-                                        !ct.promotesTo(float2type) && 
+                                        !ct.promotesTo(TypePrimitive.floattype) &&
+                                        !ct.promotesTo(TypePrimitive.doubletype) &&
+                                        !ct.promotesTo(float2type) &&
                                         !ct.promotesTo(float3type) && 
                                         !ct.promotesTo(float4type))
                                         report(expr,
@@ -872,8 +876,8 @@ public class SemanticChecker
                     if (xt != null && streamType != null &&
                         streamType.getOut() != null &&
                         !(xt.promotesTo(streamType.getOut())))
-                        report(stmt, "push expression must be of "+
-                               "output type of filter");
+                        report(stmt, "push expression type " + xt +
+                               " does not match output type of filter " + streamType.getOut());
                     
                     return super.visitStmtPush(stmt);
                 }

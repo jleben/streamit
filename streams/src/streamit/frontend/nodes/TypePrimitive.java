@@ -60,6 +60,9 @@ public class TypePrimitive extends Type
     /** Type object for float types. */
     public static final TypePrimitive floattype =
         new TypePrimitive(TYPE_FLOAT);
+    /** Type object for double types. */
+    public static final TypePrimitive doubletype =
+        new TypePrimitive(TYPE_DOUBLE);
     /** Type object for complex primitive types. */
     public static final TypePrimitive cplxtype =
         new TypePrimitive(TYPE_COMPLEX);
@@ -161,19 +164,20 @@ public class TypePrimitive extends Type
                     t2 == TYPE_COMPLEX || t2 == TYPE_STRING;
             case TYPE_BIT:
                 return t2 == TYPE_BIT || t2 == TYPE_INT ||
-                    t2 == TYPE_FLOAT || t2 == TYPE_COMPLEX ||
+                    t2 == TYPE_FLOAT || t2 == TYPE_DOUBLE || t2 == TYPE_COMPLEX ||
                     t2 == TYPE_STRING;
             case TYPE_INT:
-                return t2 == TYPE_INT || t2 == TYPE_FLOAT || t2 == TYPE_COMPLEX ||
+                return t2 == TYPE_INT || t2 == TYPE_FLOAT || t2 == TYPE_DOUBLE || t2 == TYPE_COMPLEX ||
                     t2 == TYPE_STRING;
             case TYPE_FLOAT:
-                return t2 == TYPE_FLOAT || t2 == TYPE_COMPLEX ||
+                return t2 == TYPE_FLOAT || t2 == TYPE_DOUBLE || t2 == TYPE_COMPLEX ||
                     t2 == TYPE_STRING || t2 == TYPE_FLOAT2 ||
                     t2 == TYPE_FLOAT3 || t2 == TYPE_FLOAT4;     
             case TYPE_FLOAT2:
             case TYPE_FLOAT3:
             case TYPE_FLOAT4:
-                return t2 == t1; 
+            case TYPE_DOUBLE:
+                return t2 == t1;
             case TYPE_COMPLEX:
                 return t2 == TYPE_COMPLEX || t2 == TYPE_STRING;
             case TYPE_CHAR:

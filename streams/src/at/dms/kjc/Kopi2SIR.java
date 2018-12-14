@@ -372,7 +372,7 @@ public class Kopi2SIR extends Utils implements AttributeVisitor, Cloneable
      * Returns whether str1 equals str2+suffix, where suffix is one of
      * the types accepted by StreamIt.
      */
-    static String[] suffixes = { "Int", "Float", "", "Bool" };
+    static String[] suffixes = { "Int", "Float", "Double", "", "Bool" };
     private boolean matchesPrefix(String str1, String str2) {
         // beginning of str1 must match str2
         if (str1.startsWith(str2)) {
