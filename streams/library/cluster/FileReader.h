@@ -37,7 +37,7 @@ public:
 
 /* Routines that are independent of <T>, make them not be in class */
 
-extern void *FileReader_open(char *pathname);
+extern void *FileReader_open(const char *pathname);
 
 extern void FileReader_close(void *fs_ptr);
 
@@ -79,15 +79,9 @@ static inline T FileReader_read(void *fs_ptr) {
         fs->buf_index = 0;      
     }
 
-    // RMR { note this code assume that the data is stored to
-    // consecutive words; which is the case for the current
-    // defintion of the <complex> data type
-    T res;
-    for (int i = 0; i < sizeof(T); i += 4) {
-        *((int*)((&res)+i)) = *(int*)(fs->file_buf + fs->buf_index);
-        fs->buf_index += 4;
-    }
-  
+    T res = *(T*)(fs->file_buf + fs->buf_index);
+    fs->buf_index += sizeof(T);
+
     // Increment the offset (the virtual data pointer)
     if (fs->file_length > 0) {
         fs->file_offset = (fs->file_offset + sizeof(T)) % fs->file_length;

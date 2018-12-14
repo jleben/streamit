@@ -23,7 +23,7 @@
 #include <assert.h>
 #include <FileWriter.h>
 
-void *FileWriter_open(char *pathname) {
+void *FileWriter_open(const char *pathname) {
     FileWriter_state *fs = new FileWriter_state();
     fs->file_handle = open(pathname, 
                            O_RDWR | O_CREAT, 

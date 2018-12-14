@@ -23,7 +23,7 @@
 #include <assert.h>
 #include <FileReader.h>
 
-void *FileReader_open(char *pathname) {
+void *FileReader_open(const char *pathname) {
     FileReader_state *fs = new FileReader_state();
     fs->file_handle = open(pathname, O_RDONLY);
     fs->file_offset = 0;

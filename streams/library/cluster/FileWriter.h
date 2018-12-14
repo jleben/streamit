@@ -37,7 +37,7 @@ public:
 
 /* Routines that are independent of <T>, make them not be in class */
 
-extern void *FileWriter_open(char *pathname);
+extern void *FileWriter_open(const char *pathname);
 
 extern void FileWriter_close(void *fs_ptr);
 
