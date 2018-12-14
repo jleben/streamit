@@ -148,21 +148,15 @@ public class ProcessFileReader {
         JBlock block = new JBlock();
 
         codeStore.appendTxtToGlobal("FILE *input;\n");
-        codeStore.appendTxtToGlobal("off_t num_inputs;\n");
-        codeStore.appendTxtToGlobal(fileInput.getType() + "*fileReadBuffer;\n");
         //codeStore.appendTxtToGlobal("int fileReadIndex__n" + codeStore.getParent().getUniqueId() + " = 0;\n");
 
-        SMPBackend.chip.getOffChipMemory().getComputeCode().appendTxtToGlobal("extern " + fileInput.getType() + "*fileReadBuffer;\n");
-        SMPBackend.chip.getOffChipMemory().getComputeCode().appendTxtToGlobal("extern off_t num_inputs;\n");
-
         //open the file read the file into the buffer on the heap
-        block.addStatement(Util.toStmt("struct stat statbuf"));
-        block.addStatement(Util.toStmt("stat(\"" + fileInput.getFileName() + "\", &statbuf)"));
-        block.addStatement(Util.toStmt("num_inputs = statbuf.st_size / " + fileInput.getType().getSizeInC()));
-        block.addStatement(Util.toStmt("fileReadBuffer = (" + fileInput.getType() + " *)malloc(statbuf.st_size)"));
-        block.addStatement(Util.toStmt("input = fopen(\"" + fileInput.getFileName() + "\", \"r\")"));
-        block.addStatement(Util.toStmt("if(fread((void *)fileReadBuffer, " + fileInput.getType().getSizeInC() + ", num_inputs, input) != num_inputs)" +
-        								"printf(\"Error reading %lu bytes of input file\\n\", (unsigned long)statbuf.st_size)"));
+        block.addStatement(Util.toStmt(
+            "input = fopen("
+                + "options.input.empty()"
+                + " ? \"" + fileInput.getFileName() + "\""
+                + " : options.input.c_str()"
+                + ", \"r\")"));
 
         /*
         for (Core other : SMPBackend.chip.getCores()) {

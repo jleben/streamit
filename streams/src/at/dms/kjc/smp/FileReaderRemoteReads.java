@@ -19,8 +19,6 @@ public class FileReaderRemoteReads extends FileReaderCode {
         checkSimple();
         generateStatements(SchedulingPhase.INIT);
         generateStatements(SchedulingPhase.STEADY);
-
-        buf.parent.getComputeCode().appendTxtToGlobal("static int fileReadIndex__" + id + " = 0;\n");
     }
 
     private void generateStatements(SchedulingPhase phase) {
@@ -31,7 +29,9 @@ public class FileReaderRemoteReads extends FileReaderCode {
        
         //we are assuming that the downstream filter has only the file reader as input
         
-        ArrayAssignmentStatements aaStmts = new ArrayAssignmentStatements();
+        //ArrayAssignmentStatements aaStmts = new ArrayAssignmentStatements();
+
+        List<JStatement> readStmts = new LinkedList<JStatement>();
 
         //System.out.println("FileReaderRemoteReads, totalItemsReceived: " + dstInfo.totalItemsReceived(phase));
 
@@ -126,7 +126,12 @@ public class FileReaderRemoteReads extends FileReaderCode {
                         //add to the array assignment loop
                         int dstElement = (copyDown + destFissionOffset + destIndex++);
                         int srcIndex = ((rot * fileOutput.totalWeights(phase)) + srcFissionOffset + fileOutput.weightBefore(weight, phase) + item);
-                        aaStmts.addAssignment(dst_buffer, "", dstElement, "fileReadBuffer", "fileReadIndex__" + id, srcIndex);
+                        //aaStmts.addAssignment(dst_buffer, "", dstElement, "fileReadBuffer", "fileReadIndex__" + id, srcIndex);
+                        readStmts.add(
+                            Util.toStmt(
+                                "fread(&" + dst_buffer + "[" + dstElement + "]" +
+                                ", sizeof(" + parent.bufType.toString() + ")" +
+                                ", 1, input)"));
                     }
                 }
             }
@@ -138,7 +143,8 @@ public class FileReaderRemoteReads extends FileReaderCode {
         default: statements = commandsSteady; break;
         }
         
-        statements.addAll(aaStmts.toCompressedJStmts());
+        //statements.addAll(aaStmts.toCompressedJStmts());
+        statements.addAll(readStmts);
         
         if (phase != SchedulingPhase.INIT) {
             //we must rotate the buffer when not in init
@@ -150,10 +156,12 @@ public class FileReaderRemoteReads extends FileReaderCode {
         
         //every filter that reads from this file must increment the index of items read
         //in a phase, even if the filter does not read during the current phase 
+        /*
         statements.add(Util.toStmt("fileReadIndex__" + id + " += " + srcInfo.totalItemsSent(phase)));
         if(!KjcOptions.noloopinput)
             statements.add(Util.toStmt("if(fileReadIndex__" + id + " + " + srcInfo.totalItemsSent(phase) + " >= num_inputs) fileReadIndex__" + id + " = 0"));
-        
+        /*
+
         //if currently in steady-state, prefetch items from the fileReadBuffer for the next steady-state
         //if we don't receive anything, don't generate prefetch code
         /*
