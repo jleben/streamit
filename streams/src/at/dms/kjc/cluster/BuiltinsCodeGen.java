@@ -568,7 +568,7 @@ class BuiltinsCodeGen {
 	    */
         
         if(KjcOptions.numbers > 0) {
-            p.println("  stats_output_count++;");
+            p.println("  stats_output_count += ____n;");
         }
         }
     }

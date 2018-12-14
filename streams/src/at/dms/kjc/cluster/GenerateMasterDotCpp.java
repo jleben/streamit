@@ -46,6 +46,10 @@ public class GenerateMasterDotCpp {
         p.print("#include <string.h>\n");
         p.print("#include <stdlib.h>\n");
         p.print("#include <stdio.h>\n");
+        p.print("#include <limits.h>\n");
+        p.newLine();
+        p.print("#include <arrp_timer.h>\n");
+        p.print("#include <arrp_streamit_utils.h>\n");
         p.newLine();
         p.print("#include <message.h>\n");
         p.print("#include <netsocket.h>\n");
@@ -85,6 +89,11 @@ public class GenerateMasterDotCpp {
         p.newLine();
 
         if(KjcOptions.numbers > 0) {
+            p.print("arrp_eval::Timer __arrp_timer(2, 3);\n");
+            p.print("uint64_t stats_output_count = 0;\n");
+            p.print("uint64_t stats_iter_count = STATS_WINDOW_SIZE;\n");
+            p.newLine();
+        /*
             p.print("uint64_t stats_start_cycle = 0;\n");
             p.print("uint64_t stats_output_count = 0;\n");
             p.print("uint64_t stats_iter_count = STATS_WINDOW_SIZE;\n");
@@ -102,6 +111,7 @@ public class GenerateMasterDotCpp {
             p.print("  stats_iter_count = 0;\n");
             p.print("}\n");
             p.newLine();
+            */
         }
 
         for (int i = 0; i < threadNumber; i++) {

@@ -861,7 +861,12 @@ class ClusterCodeGenerator {
 
         if(KjcOptions.numbers > 0 && (oper instanceof SIRFileWriter)) {
             r.add("    stats_iter_count++;\n");
-            r.add("    if(stats_iter_count >= STATS_WINDOW_SIZE) printSSCycleAvg();\n");
+            r.add("    if(stats_iter_count >= STATS_WINDOW_SIZE) {\n");
+            r.add("        __arrp_timer.stop(stats_output_count);\n");
+            r.add("        stats_iter_count = 0;\n");
+            r.add("        stats_output_count = 0;\n");
+            r.add("        __arrp_timer.start();\n");
+            r.add("    }\n");
         }
 
         r.add("#ifdef __CHECKPOINT_FREQ\n");
