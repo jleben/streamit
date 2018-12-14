@@ -861,13 +861,15 @@ class ClusterCodeGenerator {
 
         if(KjcOptions.numbers > 0 && (oper instanceof SIRFileWriter)) {
             r.add("    stats_iter_count++;\n");
-            r.add("    if(stats_iter_count >= STATS_WINDOW_SIZE) {\n");
-            r.add("        __arrp_timer.stop(stats_output_count);\n");
+            r.add("    if(__arrp_options.time && stats_iter_count >= STATS_WINDOW_SIZE) {\n");
+            r.add("        __arrp_timer.stop(__output_count);\n");
             r.add("        stats_iter_count = 0;\n");
-            r.add("        stats_output_count = 0;\n");
+            r.add("        __output_count = 0;\n");
             r.add("        __arrp_timer.start();\n");
             r.add("    }\n");
         }
+
+        r.add("    if (__arrp_options.out_count > 0 && __output_count >= __arrp_options.out_count) exit(0);\n");
 
         r.add("#ifdef __CHECKPOINT_FREQ\n");
         r.add("    if (_steady % __CHECKPOINT_FREQ == 0)\n");

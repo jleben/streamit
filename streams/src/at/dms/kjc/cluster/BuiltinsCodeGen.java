@@ -425,7 +425,11 @@ class BuiltinsCodeGen {
 	    p.print("assert (" + fpName(fr) + ");");
 	    p.newLine();
 	} else {
-	    p.print("__file_descr__"+id+" = FileReader_open(\""+fr.getFileName()+"\");");
+	    p.print("__file_descr__"+id+" = FileReader_open("
+                + "__arrp_options.input.empty()"
+                + " ? \"" + fr.getFileName() + "\""
+                + " : __arrp_options.input.c_str()"
+                + ");");
 	    p.newLine();
 	    p.print("assert (__file_descr__"+id+");");
 	    p.newLine();
@@ -567,9 +571,7 @@ class BuiltinsCodeGen {
             p.println("#endif");
 	    */
         
-        if(KjcOptions.numbers > 0) {
-            p.println("  stats_output_count += ____n;");
-        }
+        p.println("  __output_count += ____n;");
         }
     }
     
@@ -609,7 +611,11 @@ class BuiltinsCodeGen {
 		      + "\", \"w\");");
 	    p.println("assert (" + fpName(fw) + ");");
 	} else {
-	    p.print("__file_descr__"+id+" = FileWriter_open(\""+fw.getFileName()+"\");");
+	    p.print("__file_descr__"+id+" = FileWriter_open("
+            + "__arrp_options.output.empty()"
+            + " ? \"" + fw.getFileName() + "\""
+            + " : __arrp_options.output.c_str()"
+            + ");");
 	    p.newLine();
 	    p.print("assert (__file_descr__"+id+");");
 	    p.newLine();

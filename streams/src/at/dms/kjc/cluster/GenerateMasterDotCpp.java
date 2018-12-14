@@ -88,9 +88,11 @@ public class GenerateMasterDotCpp {
         p.print("unsigned myip;\n");
         p.newLine();
 
+        p.print("arrp_eval::Test_Options __arrp_options;\n");
+        p.print("int64_t __output_count = 0;\n");
+
         if(KjcOptions.numbers > 0) {
             p.print("arrp_eval::Timer __arrp_timer(2, 3);\n");
-            p.print("uint64_t stats_output_count = 0;\n");
             p.print("uint64_t stats_iter_count = STATS_WINDOW_SIZE;\n");
             p.newLine();
         /*
@@ -228,6 +230,9 @@ public class GenerateMasterDotCpp {
 
         p.print("  master_pid = getpid();\n");
 
+        p.print("  __arrp_options = arrp_eval::Test_Options::parse(argc, argv);\n");
+
+        /*
         p.print("  for (int a = 1; a < argc; a++) {\n");
 
         p.print("    if (argc > a + 1 && strcmp(argv[a], \"-init\") == 0) {\n"); 
@@ -290,6 +295,7 @@ public class GenerateMasterDotCpp {
         p.print("    }\n");
 
         p.print("  }\n");
+        */
 
         p.newLine();
 
