@@ -159,10 +159,10 @@ class FusionCode {
 
         if (KjcOptions.nomult || !inc_mult) mult = 1;
 
-        if (mult != 1) {
+        //if (mult != 1) {
             p.print("#define __MULT " + mult + "\n");
             p.newLine();
-        }
+        //}
         
  //       if (KjcOptions.standalone) {
         // threadcount is the number of operators after fusion/cacheopts
@@ -224,6 +224,9 @@ class FusionCode {
         p.print("#include <stdlib.h>\n");
         p.print("#include <stdio.h>\n");
         p.newLine();
+        p.print("#include <arrp_timer.h>\n");
+        p.print("#include <arrp_streamit_utils.h>\n");
+        p.newLine();
         if (!externalTool) {
             p.print("#include <message.h>\n");
             p.print("#include <netsocket.h>\n");
@@ -252,6 +255,10 @@ class FusionCode {
             p.print("volatile int __vol;\n");
             p.print("proc_timer tt(\"total runtime\");\n");
             p.newLine();
+
+            p.print("arrp_eval::Test_Options __arrp_options;\n");
+            p.print("arrp_eval::Timer __arrp_timer(2);\n");
+            p.print("int64_t __output_count = 0;\n");
 
             // declare profiling timers
             if (KjcOptions.profile) {
@@ -367,7 +374,11 @@ class FusionCode {
             p.println("profiler::set_num_ids(" + InsertCounters.getNumIds() + ");");
             p.outdent();
         }
+
+        p.indent();
+        p.println("__arrp_options = arrp_eval::Test_Options::parse(argc, argv);");
         
+        /*
         if (!externalTool) {
             p.indent();
             p.println("read_setup::read_setup_file();");
@@ -421,6 +432,7 @@ class FusionCode {
             p.println("}");
             p.outdent();
         }
+        */
 
         
 // implicit_mult used to be a parameter, but entire peek-scaling
@@ -560,7 +572,8 @@ class FusionCode {
             p.println("  }");
         }
         if (!externalTool) {
-            p.print("  for (int n = 0; n < (__max_iteration " + (mult == 1? "" : " / __MULT") +  " ); n++) {\n");
+            //p.print("  for (int n = 0; n < (__max_iteration " + (mult == 1? "" : " / __MULT") +  " ); n++) {\n");
+            p.print("  for (int n = 0; ; n++) {\n");
         }
 
         for (int ph = 0; ph < n_phases; ph++) {
@@ -651,6 +664,20 @@ class FusionCode {
                 p.newLine();
             }
         }
+
+        p.indent();
+        p.indent();
+        p.println("if (__arrp_options.time && n * __MULT >= __arrp_options.time_iter_count) {");
+        p.indent();
+        p.println("__arrp_timer.stop(__output_count);");
+        p.println("__output_count = 0;");
+        p.println("if (__arrp_timer.done_repetitions() >= 5) break;");
+        p.println("__arrp_timer.start();");
+        p.outdent();
+        p.println("}");
+        p.println("else if (__arrp_options.out_count > 0 && __output_count >= __arrp_options.out_count) break;");
+        p.outdent();
+        p.outdent();
         
         if (!externalTool) {
             p.print("  }\n");
