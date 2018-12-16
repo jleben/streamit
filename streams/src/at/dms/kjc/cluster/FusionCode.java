@@ -224,8 +224,10 @@ class FusionCode {
         p.print("#include <stdlib.h>\n");
         p.print("#include <stdio.h>\n");
         p.newLine();
+        // Arrp evaluation headers
         p.print("#include <arrp_timer.h>\n");
         p.print("#include <arrp_streamit_utils.h>\n");
+        p.print("#include <context.hpp>\n");
         p.newLine();
         if (!externalTool) {
             p.print("#include <message.h>\n");
@@ -378,6 +380,8 @@ class FusionCode {
         p.indent();
         p.println("__arrp_options = arrp_eval::Test_Options::parse(argc, argv);");
         
+        p.println("arrp_eval::set_max_cpu_latency(0);");
+
         /*
         if (!externalTool) {
             p.indent();
