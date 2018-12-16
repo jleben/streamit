@@ -573,7 +573,8 @@ class FusionCode {
         }
         if (!externalTool) {
             //p.print("  for (int n = 0; n < (__max_iteration " + (mult == 1? "" : " / __MULT") +  " ); n++) {\n");
-            p.print("  for (int n = 0; ; n++) {\n");
+            p.println("  int64_t n = 0;");
+            p.println("  while (true) {");
         }
 
         for (int ph = 0; ph < n_phases; ph++) {
@@ -669,9 +670,10 @@ class FusionCode {
         p.indent();
         p.println("if (__arrp_options.time && n * __MULT >= __arrp_options.time_iter_count) {");
         p.indent();
+        p.println("n = 0;");
         p.println("__arrp_timer.stop(__output_count);");
         p.println("__output_count = 0;");
-        p.println("if (__arrp_timer.done_repetitions() >= 5) break;");
+        p.println("if (__arrp_timer.done_repetitions() >= 5) { __arrp_timer.report(); break; }");
         p.println("__arrp_timer.start();");
         p.outdent();
         p.println("}");
@@ -680,6 +682,7 @@ class FusionCode {
         p.outdent();
         
         if (!externalTool) {
+            p.println("    ++n;");
             p.print("  }\n");
         }
         
