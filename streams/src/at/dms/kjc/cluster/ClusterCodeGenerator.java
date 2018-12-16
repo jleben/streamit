@@ -869,7 +869,10 @@ class ClusterCodeGenerator {
             r.add("    }\n");
         }
 
-        r.add("    if (__arrp_options.out_count > 0 && __output_count >= __arrp_options.out_count) exit(0);\n");
+        if (oper instanceof SIRFileWriter) {
+            r.add("    printf(\"Hello.\\n\");");
+            r.add("    if (__arrp_options.out_count > 0 && __output_count >= __arrp_options.out_count) exit(0);\n");
+        }
 
         r.add("#ifdef __CHECKPOINT_FREQ\n");
         r.add("    if (_steady % __CHECKPOINT_FREQ == 0)\n");
