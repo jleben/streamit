@@ -26,7 +26,7 @@
 void *FileWriter_open(const char *pathname) {
     FileWriter_state *fs = new FileWriter_state();
     fs->file_handle = open(pathname, 
-                           O_RDWR | O_CREAT, 
+                           O_RDWR | O_CREAT | O_TRUNC,
                            S_IREAD | S_IWRITE | S_IRGRP | S_IROTH);
     fs->file_offset = 0;
     if (fs->file_handle == -1) {
