@@ -19,6 +19,8 @@ public class FileReaderRemoteReads extends FileReaderCode {
         checkSimple();
         generateStatements(SchedulingPhase.INIT);
         generateStatements(SchedulingPhase.STEADY);
+
+        buf.parent.getComputeCode().appendTxtToGlobal("extern FILE* input;\n");
     }
 
     private void generateStatements(SchedulingPhase phase) {
