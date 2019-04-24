@@ -1,9 +1,16 @@
+# Before using StreamIt:
+# - set and export STREAMIT_HOME
+# - set JDK_1_6_DIR
+# - source this script
+
 ### Location of unpacked StreamIt tree
-STREAMIT_HOME=$HOME/code/streamit/streams
+if [[ -z "$STREAMIT_HOME" || -z "$JDK_1_6_DIR" ]]; then
+    echo "Please set the following environment variables: STREAMIT_HOME, JDK_1_6_DIR"
+    exit 1
+fi
 
 ### Location of ANTLR jar file (test: 'java antlr.tool')
-#ANTLRJAR=/home/jakob/apps/antlr/antlr-4.7.1-complete.jar
-ANTLRJAR=/home/jakob/code/streamit/streams/uns/antlr.jar
+ANTLRJAR=$STREAMIT_HOME/uns/antlr.jar
 
 ### Update CLASSPATH
 CLASSPATH=.:${CLASSPATH}
@@ -16,7 +23,7 @@ CLASSPATH=${CLASSPATH}:${STREAMIT_HOME}/3rdparty/JFlex/jflex.jar
 CLASSPATH=${CLASSPATH}:${STREAMIT_HOME}/3rdparty/jcc/jcc.jar
 
 ### Update the shell path
-PATH=/home/jakob/apps/jdk1.6.0_45/bin:${STREAMIT_HOME}:${PATH}
+PATH=$JDK_1_6_DIR/bin:${STREAMIT_HOME}:${PATH}
 
 ### Declare host type
 STRC_HOST_TYPE="x86-linux"
